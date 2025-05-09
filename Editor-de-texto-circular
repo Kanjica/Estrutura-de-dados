@@ -1,7 +1,8 @@
 #include <iostream>
 
-int posPalavra = -1;
-int qtdPalavra = 0;
+void limparTela(){ //função q achei na net pra limpar a tela, uma alternativa p n usar system
+    std::cout << "\033[2J\033[1;1H";
+}
 
 struct Nodo {
 	char *info;
@@ -10,20 +11,27 @@ struct Nodo {
 
 class listaCircular {
 	Nodo *inicio, *fim;
+	int posPalavra;
+    int qtdPalavra;
 
 public:
 	listaCircular() {
 		inicio = nullptr;
 		fim = nullptr;
+		posPalavra = -1;
+        qtdPalavra = 0;
 	}
 
 	char* palavraAtual();
 	void imprimirFrase();
 	void editar();
-	void add(char *palavra, int *qtdPalavra);
-	void remover(int *qtdPalavra);
-	void palavraAnterior(int *posPalavra, int *qtdPalavra);
-	void palavraPosterior(int *posPalavra, int *qtdPalavra);
+	void add(char *palavra);
+	void remover();
+	void palavraAnterior();
+	void palavraPosterior();
+	void setPosPalavra(int i){
+	    this->posPalavra = i;
+	}
 };
 
 char* listaCircular::palavraAtual() {
@@ -69,7 +77,7 @@ void listaCircular::editar() {
 	std::cin >> atual->info;
 }
 
-void listaCircular::add(char *palavra, int *qtdPalavra) {
+void listaCircular::add(char *palavra ) {
 	Nodo *novo, *atual, *anterior; 
 	
 	novo = new Nodo();
@@ -90,7 +98,7 @@ void listaCircular::add(char *palavra, int *qtdPalavra) {
 		inicio->prox = inicio;
 		inicio->ant = inicio;
 		fim = inicio;
-		(*qtdPalavra)++;
+		(qtdPalavra)++;
 	}
 	else {
 		atual = inicio;
@@ -112,12 +120,12 @@ void listaCircular::add(char *palavra, int *qtdPalavra) {
 			inicio = novo;
 		}
 
-		(*qtdPalavra)++;
+		(qtdPalavra)++;
 
 	}
 }
 
-void listaCircular::remover(int *qtdPalavra){
+void listaCircular::remover( ){
 	Nodo *atual = inicio;
 	Nodo *anterior = nullptr;
 
@@ -133,7 +141,7 @@ void listaCircular::remover(int *qtdPalavra){
 		delete atual;
 		inicio = nullptr;
 		fim = nullptr;
-		*qtdPalavra = 0;
+		qtdPalavra = 0;
 		return;
 	}
 
@@ -147,24 +155,24 @@ void listaCircular::remover(int *qtdPalavra){
 	delete[] atual->info;
 	delete atual;
 
-	(*qtdPalavra)--;
+	(qtdPalavra)--;
 
-	if (*qtdPalavra == 0) {
+	if (qtdPalavra == 0) {
 		inicio = nullptr;
 		fim = nullptr;
 	}
 
-	if(posPalavra >= *qtdPalavra) posPalavra = 0;
+	if(posPalavra >= qtdPalavra) posPalavra = 0;
 }
 
-void listaCircular::palavraAnterior(int *posPalavra, int *qtdPalavra) {
-	(*posPalavra)--;
-	if(*posPalavra == -1) *posPalavra = *qtdPalavra - 1;
+void listaCircular::palavraAnterior(  ) {
+	(posPalavra)--;
+	if(posPalavra == -1) posPalavra = qtdPalavra - 1;
 }
 
-void listaCircular::palavraPosterior(int *posPalavra, int *qtdPalavra) {
-	(*posPalavra)++;
-	if(*posPalavra == *qtdPalavra) *posPalavra = 0;
+void listaCircular::palavraPosterior(  ) {
+	(posPalavra)++;
+	if(posPalavra == qtdPalavra) posPalavra = 0;
 }
 
 
@@ -173,13 +181,13 @@ int main() {
 	char action = 'a';
 	char palavraNova[50];
 
-	editor.add((char*)"Lorem", &qtdPalavra);
-	editor.add((char*)"ipsum", &qtdPalavra);
-	editor.add((char*)"dolor", &qtdPalavra);
-    editor.add((char*)"sit", &qtdPalavra);
-	editor.add((char*)"amet", &qtdPalavra);
+	editor.add((char*)"Lorem" );
+	editor.add((char*)"ipsum" );
+	editor.add((char*)"dolor" );
+    editor.add((char*)"sit" );
+	editor.add((char*)"amet" );
 	
-	posPalavra=0;
+	editor.setPosPalavra((int)0);
 	
 	while (1) {
 		editor.imprimirFrase();
@@ -212,19 +220,19 @@ int main() {
 			std::cout << "Nova palavra: ";
 			std::cin >> palavraNova;
 
-			editor.add(palavraNova, &qtdPalavra);
+			editor.add(palavraNova );
 			break;
 
 		case 'S':
-			editor.remover(&qtdPalavra);
+			editor.remover( );
 			break;
 
 		case '<':
-			editor.palavraAnterior(&posPalavra, &qtdPalavra);
+			editor.palavraAnterior(  );
 			break;
 
 		case '>':
-			editor.palavraPosterior(&posPalavra, &qtdPalavra);
+			editor.palavraPosterior(  );
 			break;
 
 		case 'X':
@@ -234,6 +242,7 @@ int main() {
 			std::cout << "deu bo" << std::endl;
 			break;
 		}
+		limparTela();
 	}
 
 	return 0;
